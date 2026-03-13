@@ -33,13 +33,13 @@ The project is built around a secure, modular Python architecture.
 ```text
 .
 ├── .env                  # Environment variables (Azure Configs, API versions)
-├── data/                 # Raw Input Data organized by Fiscal Year
+├── data/                 # Raw Input Data (Included in repo for easy, zero-setup usage)
 │   ├── FISCAL YEAR 2024/
 │   │   ├── Strategy Notes/
 │   │   ├── Quarterly Reports/
 │   │   └── ...
 │   └── FISCAL YEAR 2025/
-├── db/                   # Persistent storage for the vector index
+├── db/                   # Persistent FAISS vector db (Included in repo for easy, zero-setup usage)
 │   └── faiss_index/      # Generated FAISS indexed tensors
 ├── main.py               # CLI Entry point for backend ingestion engine
 ├── app.py                # Streamlit Frontend application
@@ -61,11 +61,15 @@ The project is built around a secure, modular Python architecture.
         └── faiss_store.py     # Parallel batch embedding execution and DB logic
 ```
 
+> [!NOTE]
+> **Data & Database Persistence in Git:**
+> For convenience and ease of use, the `data/` files and pre-built `db/` FAISS indexed vector databases have been committed directly to this GitHub repository. This allows developers to clone the repository and run the application immediately without needing to recreate the index. *However*, in standard enterprise development practices, raw PDF files and generated vector databases should be added to `.gitignore` and kept in secure external storage (e.g., Azure Blob Storage, AWS S3) to prevent repository bloat and secure sensitive information.
+
 ---
 
-## 📊 Data Understanding & Extraction Strategy
+## 📊 How Ingestion Works: Multi-Modal Extraction Strategy
 
-To achieve the highest fidelity of responses, standard text extraction was not enough. Apple's corporate filings contain crucial financial data embedded inside complex table structures and graphical charts.
+To achieve the highest fidelity of RAG responses, standard text extraction is not enough. The asynchronous ingestion pipeline (`main.py --ingest`) performs a deep, multi-modal pass over Apple's corporate filings. It specifically targets the crucial financial data embedded inside complex table structures and layout images that standard retrieval systems miss.
 
 1. **Rich Metadata Mapping:**
    - Instead of treating all chunks equally, the `document_parser.py` extracts the **Fiscal Year**, **Quarters (Q1-Q4)**, and **Document Types** (10-K, 10-Q, Earnings) directly from the directory paths and filenames. 
