@@ -61,9 +61,12 @@ The project is built around a secure, modular Python architecture.
         └── faiss_store.py     # Parallel batch embedding execution and DB logic
 ```
 
-> [!NOTE]
-> **Data & Database Persistence in Git:**
-> For convenience and ease of use, the `data/` files and pre-built `db/` FAISS indexed vector databases have been committed directly to this GitHub repository. This allows developers to clone the repository and run the application immediately without needing to recreate the index. *However*, in standard enterprise development practices, raw PDF files and generated vector databases should be added to `.gitignore` and kept in secure external storage (e.g., Azure Blob Storage, AWS S3) to prevent repository bloat and secure sensitive information.
+---
+
+### Data & Database Persistence in Git
+
+I have added data files and vector db files both in git repo because it is very less size ,and it will be very easy to use directlty
+but in standard practice these we can keep in gitignore(or external storage)
 
 ---
 
