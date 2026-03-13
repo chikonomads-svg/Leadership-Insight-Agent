@@ -13,53 +13,59 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS for a beautiful, premium Apple-like aesthetic
+# Custom CSS for a beautiful, colorful, and vibrant aesthetic
 st.markdown("""
 <style>
-    /* Main background with a clean, minimal aesthetic */
+    /* Main background with a vibrant, subtle gradient */
     .stApp {
-        background-color: #fbfbfd;
-        color: #1d1d1f;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(180deg, #ffffff 0%, #ffe8e8 100%);
+        color: #1a1a1a;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     
-    /* Headers matching Apple typography */
+    /* Headers with dynamic gradient text */
     h1, h2, h3 {
-        color: #1d1d1f;
-        font-weight: 600;
-        letter-spacing: -0.015em;
+        background: -webkit-linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        letter-spacing: -0.03em;
         margin-bottom: 0.5rem;
     }
     
-    /* User Message Bubble matching Apple style */
+    /* User Message Bubble with vibrant gradient */
     .stChatMessage.user {
-        background-color: #0071e3;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border-radius: 18px 18px 4px 18px;
-        padding: 12px 18px;
+        border-radius: 20px 20px 0px 20px;
+        padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 113, 227, 0.15);
+        box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
         border: none;
+        transition: transform 0.2s ease;
     }
     .stChatMessage.user p {
         color: white;
-        font-size: 1rem;
-        line-height: 1.4;
+        font-size: 1.05rem;
+    }
+    .stChatMessage.user:hover {
+        transform: translateY(-2px);
     }
     
-    /* Assistant Message Bubble with refined, clean look */
+    /* Assistant Message Bubble with crisp glassmorphism */
     .stChatMessage.assistant {
-        background-color: #ffffff;
-        color: #1d1d1f;
-        border-radius: 18px 18px 18px 4px;
-        padding: 14px 20px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        color: #2b2b2b;
+        border-radius: 20px 20px 20px 0px;
+        padding: 15px 20px;
         margin-bottom: 20px;
-        border: 1px solid rgba(0,0,0,0.08);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(255,255,255,0.4);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        transition: transform 0.2s ease;
     }
-    .stChatMessage.assistant p {
-        font-size: 1rem;
-        line-height: 1.5;
+    .stChatMessage.assistant:hover {
+        transform: translateY(-2px);
     }
     
     /* Input Box styling container */
@@ -67,39 +73,63 @@ st.markdown("""
         padding-bottom: 2rem;
     }
     
-    /* Sidebar with elegant minimal styling */
+    /* Sidebar with colorful gradient */
     [data-testid="stSidebar"] {
-        background-color: #f5f5f7;
-        border-right: 1px solid rgba(0,0,0,0.08);
+        background: linear-gradient(180deg, #ffffff 0%, #ffe8e8 100%);
+        border-right: 1px solid rgba(255,107,107,0.2);
+        box-shadow: 2px 0 15px rgba(255,107,107,0.1);
     }
     
-    /* Sidebar Button styling matching Apple sleekness */
+    /* Sidebar Button styling */
     .stButton button {
-        background-color: #ffffff;
-        color: #1d1d1f !important;
-        border: 1px solid rgba(0,0,0,0.1);
-        border-radius: 980px; /* Fully rounded buttons */
-        font-weight: 500;
-        padding: 0.4rem 1.2rem;
-        transition: all 0.2s ease;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+        color: white !important;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
         width: 100%;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .stButton button:hover {
-        background-color: #f5f5f7;
-        border-color: rgba(0,0,0,0.15);
-        color: #1d1d1f !important;
+        transform: scale(1.02);
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        color: white !important;
     }
     .stButton button p {
-        color: #1d1d1f !important;
+        color: white !important;
     }
     
-    /* Expander styling */
+    /* Expander styling - API Config Area */
     .streamlit-expanderHeader {
-        background-color: transparent !important;
+        background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%) !important;
         color: #1d1d1f !important;
+        font-weight: 800;
+        border-radius: 10px !important;
+        border: none !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 5px;
+    }
+    
+    div[data-testid="stExpanderDetails"] {
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(5px);
+        border: 2px solid #ff9a9e !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
+    }
+    
+    /* API Input Fields */
+    .stTextInput input, .stSelectbox div[data-baseweb="select"] {
+        background: rgba(255, 255, 255, 0.8) !important;
+        border: 2px solid #4ECDC4 !important;
+        border-radius: 10px !important;
+        color: #1a1a1a !important;
         font-weight: 500;
-        border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .stTextInput input:focus, .stSelectbox div[data-baseweb="select"]:focus {
+        border-color: #FF6B6B !important;
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.3) !important;
     }
 </style>
 """, unsafe_allow_html=True)
