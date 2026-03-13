@@ -16,21 +16,37 @@ st.set_page_config(
 # Custom CSS for a beautiful, colorful, and vibrant aesthetic
 st.markdown("""
 <style>
-    /* Main background with a vibrant, subtle gradient */
-    .stApp {
-        background: linear-gradient(180deg, #ffffff 0%, #ffe8e8 100%);
-        color: #1a1a1a;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Reduce top padding to move content higher */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 0rem !important;
+    }
+
+    /* Headers with dynamic gradient text - made smaller */
+    h1 {
+        background: -webkit-linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.2rem;
+        font-size: 1.8rem !important;
     }
     
-    /* Headers with dynamic gradient text */
-    h1, h2, h3 {
+    h2, h3 {
         background: -webkit-linear-gradient(45deg, #FF6B6B, #4ECDC4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 800;
         letter-spacing: -0.03em;
         margin-bottom: 0.5rem;
+    }
+
+    /* Smaller subheader description */
+    .subheader-text {
+        font-size: 0.9rem;
+        color: #4a4a4a;
+        margin-bottom: 1.5rem;
     }
     
     /* User Message Bubble with vibrant gradient */
@@ -136,7 +152,7 @@ st.markdown("""
 
 # Application Header
 st.title("🍎 Apple Leadership Insights")
-st.markdown("Ask questions about Apple's strategy, financials, and operations based on recent FY24 & FY25 corporate documents.")
+st.markdown('<div class="subheader-text">Ask questions about Apple\'s strategy, financials, and operations based on recent FY24 & FY25 corporate documents.</div>', unsafe_allow_html=True)
 
 # Sidebar information
 with st.sidebar:
