@@ -2,6 +2,7 @@ import streamlit as st
 import asyncio
 from src.agent.rag_chain import LeadershipInsightAgent
 from src.agent.chart_generator import ChartGenerator
+from src.agent.evaluator import RAGEvaluator
 from src.ui.formatter import render_chart
 from src.ui.model_selector import render_model_selector
 
@@ -147,6 +148,22 @@ st.markdown("""
         border-color: #FF6B6B !important;
         box-shadow: 0 0 10px rgba(255, 107, 107, 0.3) !important;
     }
+    
+    /* Validation Report Styling */
+    .validation-report {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 10px;
+        border: 1px solid rgba(78, 205, 196, 0.3);
+    }
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: -webkit-linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -186,6 +203,11 @@ if "agent" not in st.session_state or model_changed:
                 model_name=st.session_state.llm_model_name,
                 api_key=st.session_state.llm_api_key_override or None
             )
+            st.session_state.evaluator = RAGEvaluator(
+                provider=st.session_state.llm_provider, 
+                model_name=st.session_state.llm_model_name,
+                api_key=st.session_state.llm_api_key_override or None
+            )
         except FileNotFoundError:
             st.error("Knowledge base not found. Please run the ingestion pipeline first via `python main.py --ingest`")
             st.stop()
@@ -194,11 +216,48 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Display chat messages from history
-for message in st.session_state.messages:
+for index, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
         if "chart_config" in message:
             render_chart(message["chart_config"])
+            
+        # If it's an assistant message, we offer the Evaluation UI
+        if message["role"] == "assistant":
+            if "evaluation" in message:
+                # Show Validation Report
+                eval_data = message["evaluation"]
+                with st.container():
+                    st.markdown('<div class="validation-report">', unsafe_allow_html=True)
+                    st.markdown("#### ✅ Validation Report")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        score = eval_data.get('faithfulness_score', 0.0)
+                        st.markdown("**Faithfulness**")
+                        st.markdown(f'<div class="metric-value">{score * 100:.0f}%</div>', unsafe_allow_html=True)
+                        st.caption(eval_data.get("faithfulness_reasoning", "N/A"))
+                    with col2:
+                        score = eval_data.get('relevance_score', 0.0)
+                        st.markdown("**Answer Relevance**")
+                        st.markdown(f'<div class="metric-value">{score * 100:.0f}%</div>', unsafe_allow_html=True)
+                        st.caption(eval_data.get("relevance_reasoning", "N/A"))
+                    st.markdown('</div>', unsafe_allow_html=True)
+            elif "source_context" in message and "question" in message:
+                # Show Evaluate Button
+                if st.button("⚖️ Evaluate Response", key=f"eval_btn_{index}"):
+                    with st.spinner("Running Validation Metrics..."):
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        eval_result = loop.run_until_complete(
+                            st.session_state.evaluator.aevaluate(
+                                question=message["question"],
+                                context=message["source_context"],
+                                answer=message["content"]
+                            )
+                        )
+                        # Store evaluation back into message history
+                        st.session_state.messages[index]["evaluation"] = eval_result
+                        st.rerun()
 
 # Handle user input
 if prompt := st.chat_input("Ask a question about Apple's strategy or operations..."):
