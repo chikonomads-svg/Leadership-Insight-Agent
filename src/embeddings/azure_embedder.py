@@ -9,6 +9,6 @@ def get_azure_embeddings() -> AzureOpenAIEmbeddings:
     return AzureOpenAIEmbeddings(
         azure_deployment=settings.AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
         openai_api_version=settings.AZURE_OPENAI_EMBEDDING_API_VERSION,
-        azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
-        api_key=settings.AZURE_OPENAI_API_KEY
+        azure_endpoint=settings.AZURE_OPENAI_ENDPOINT or "https://dummy-endpoint.openai.azure.com",
+        api_key=settings.AZURE_OPENAI_API_KEY or "dummy-key-to-bypass-init-crash"
     )
