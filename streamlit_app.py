@@ -305,11 +305,34 @@ if prompt := st.chat_input("Ask a question about Apple's strategy or operations.
                     render_chart(chart_config)
                 
                 # Add assistant response to history
-                st.session_state.messages.append({
+                raw_context = "\n\n".join([d.page_content for d in docs])
+                new_msg_index = len(st.session_state.messages)
+                
+                new_message = {
                     "role": "assistant", 
                     "content": answer_text,
-                    "chart_config": chart_config
-                })
+                    "chart_config": chart_config,
+                    "source_context": raw_context,
+                    "question": prompt
+                }
+                st.session_state.messages.append(new_message)
+                
+                # Show Evaluate Button for the new message
+                if st.button("⚖️ Evaluate Response", key=f"eval_btn_{new_msg_index}"):
+                    with st.spinner("Running Validation Metrics..."):
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        eval_result = loop.run_until_complete(
+                            st.session_state.evaluator.aevaluate(
+                                question=prompt,
+                                context=raw_context,
+                                answer=answer_text
+                            )
+                        )
+                        # Store evaluation back into message history
+                        st.session_state.messages[new_msg_index]["evaluation"] = eval_result
+                        st.rerun()
+                        
             except Exception as e:
                 response_placeholder.error(f"An error occurred: {str(e)}")
             finally:
